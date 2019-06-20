@@ -1,0 +1,267 @@
+		<!-- BEGIN PAGE CONTAINER-->
+
+		<div class="container-fluid">
+
+			<!-- BEGIN PAGE HEADER-->
+
+			<div class="row-fluid">
+
+				<div class="span12">
+
+					<h3 class="page-title">
+
+						新增公寓 <small></small>
+
+					</h3>
+
+					<ul class="breadcrumb">
+
+						<li>
+
+							<i class="icon-th"></i>
+
+							<a>公寓管理</a>
+
+							<i class="icon-angle-right"></i>
+
+						</li>
+
+						<li><a>新增公寓</a></li>
+
+					</ul>
+
+					<!-- END PAGE TITLE & BREADCRUMB-->
+
+				</div>
+
+			</div>
+
+			<!-- END PAGE HEADER-->
+			
+			<!-- 主内容窗口 -->
+			<div class="portlet-body form">
+			
+				<!-- BEGIN FORM-->
+			
+				<form name="form"  id="form_sample_2" class="form-horizontal"  method="post" enctype="multipart/form-data">
+			
+					<div class="alert alert-error hide">
+			
+						<button class="close" data-dismiss="alert"></button>
+			
+						信息不完整或出现错误，请检查
+			
+					</div>
+			
+					<div class="alert alert-success hide">
+			
+						<button class="close" data-dismiss="alert"></button>
+			
+						恭喜您完成新增公寓！
+			
+					</div>
+			
+					<div class="control-group">
+			
+						<label class="control-label">公寓名<span class="required">*</span></label>
+			
+						<div class="controls">
+			
+							<input type="text" name="name" data-required="1" class="span6 m-wrap"/>
+			
+						</div>
+			
+					</div>
+					
+					<div class="control-group">
+			
+						<label class="control-label">所在区域<span class="required">*</span></label>
+			
+						<div class="controls">
+			
+							<select class="span6 m-wrap" name="district">
+								<option value="">请选择...</option>
+			
+								<option value="南山">南山区</option>
+			
+								<option value="福田">福田区</option>
+			
+								<option value="宝安">宝安区</option>
+			
+								<option value="龙华">龙华区</option>
+								
+								<option value="罗湖">罗湖区</option>
+								
+								<option value="龙岗">龙岗区</option>
+								
+								<option value="盐田">盐田区</option>
+								
+								<option value="光明新区">光明新区</option>
+								
+								<option value="大鹏新区">大鹏新区</option>
+			
+							</select>
+			
+						</div>
+			
+					</div>
+			
+					<div class="control-group">
+			
+						<label class="control-label">详细地址<span class="required">*</span></label>
+			
+						<div class="controls">
+			
+							<input name="addr" type="text" class="span6 m-wrap"/>
+			
+						</div>
+			
+					</div>
+					
+					<div class="control-group">
+			
+						<label class="control-label">业主电话<span class="required">*</span></label>
+			
+						<div class="controls">
+			
+							<input name="phone" type="text" class="span6 m-wrap"/>
+			
+						</div>
+			
+					</div>
+			
+					<div class="control-group">
+			
+						<label class="control-label">公寓类型<span class="required">*</span></label>
+			
+						<div class="controls">
+			
+							<select class="span6 m-wrap" name="type">
+			
+								<option value="">请选择</option>
+			
+								<option value="豪华型">豪华型</option>
+			
+								<option value="舒适型">舒适型</option>
+			
+								<option value="经济型">经济型</option>
+			
+							</select>
+			
+						</div>
+			
+					</div>
+					
+					<div class="control-group">
+			
+						<label class="control-label">公寓面积(㎡)<span class="required">*</span></label>
+			
+						<div class="controls">
+			
+							<input name="place" type="text" class="span6 m-wrap"/>
+			
+						</div>
+			
+					</div>
+					
+					<div class="control-group">
+			
+						<label class="control-label">公寓租金(￥)<span class="required">*</span></label>
+			
+						<div class="controls">
+			
+							<input name="price" type="text" class="span6 m-wrap"/>
+			
+						</div>
+			
+					</div>
+					
+					<!-- 上传照片 -->
+					<div class="control-group">
+
+							<label class="control-label">公寓图片<span class="required">*</span></label>
+
+							<div class="controls">
+
+									<div class="fileupload fileupload-new" data-provides="fileupload">
+
+										<div class="input-append">
+
+											<div class="uneditable-input">
+
+												<i class="icon-file fileupload-exists"></i> 
+
+												<span class="fileupload-preview"></span>
+
+											</div>
+
+											<span class="btn btn-file">
+
+											<span class="fileupload-new">选择图片</span>
+
+											<span class="fileupload-exists">修改</span>
+
+											<input type="file"  name="picture"  class="default" />
+
+											</span>
+
+											<a  class="btn fileupload-exists" data-dismiss="fileupload">删除</a>
+
+										</div>
+
+								</div>
+
+							</div>
+							
+							<div class="control-group">
+
+									<label class="control-label">描述<span class="required">*</span></label>
+
+									<div class="controls">
+
+											<textarea name="description" class="large m-wrap" rows="3"></textarea>
+
+									</div>
+
+							</div>
+
+					</div>
+			
+					<div class="form-actions">
+			
+						<button type="button" class="btn green" onclick="submitAp()">提交</button>
+			
+						<button onclick="addAp()" type="button" class="btn">取消</button>
+			
+					</div>
+			
+				</form>
+			
+				<!-- END FORM-->
+			
+			</div>
+</div>
+<script>
+
+	FormValidation.init();
+	FormComponents.init();
+	function saveAp(){
+		console.log("saveAp");
+		return true;
+	}
+	function submitAp(){
+		form.action="ap/doSaveObject";
+		console.log("doSaveObject");
+		form.submit();
+	}
+	
+	function addAp(){
+		$(".page-content").load("ap/doShowApUI");
+	}
+	
+	function pictureUpload(){
+		console.log("pictureUpload")
+	}
+	
+	
+</script>
