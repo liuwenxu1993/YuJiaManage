@@ -1,0 +1,293 @@
+<div class="container-fluid" style="background-color: #ECF0F5;">
+	<!-- BEGIN PAGE HEADER-->
+	<div class="row-fluid" id="personId">
+		<div class="span12">
+			<!-- BEGIN PAGE TITLE & BREADCRUMB-->
+			<h3 class="page-title">业务处理中心</h3>
+			<ul class="breadcrumb">
+				<li><i class="icon-table"></i> <a href="\">业务处理中心</a> <i
+					class="icon-angle-right"></i></li>
+				<li id="title-index"><a id="reloadPageId">财务管理中心</a></li>
+			</ul>
+			<!-- END PAGE TITLE & BREADCRUMB-->
+			<div id="historyInfoCountId"></div>
+		</div>
+	</div>
+
+	<div id="boxInfoId">
+		<!-- END PAGE HEADER-->
+		<div class="span4" style="width: 97%;">
+			<div class="portlet sale-summary" style="width: 130%;">
+				<div class="portlet-title">
+					<div class="caption">营业额统计</div>
+					<div class="tools">
+						<a class="reload" href="javascript:;"></a>
+					</div>
+				</div>
+				<ul class="unstyled" style="white-space: nowrap">
+					<li style="float: left; display: inline-block;"><span
+						class="sale-info" style="font-size: medium;">本月公寓预约营业额:</span> <span
+						class="sale-num" id="account"> </span></li>
+					<li style="float: left; display: inline-block; padding-left: 65px"><span
+						class="sale-info" style="font-size: medium;">本月清洁服务营业额:</span> <span
+						class="sale-num" id="onRentCount">/</span></li>
+				</ul>
+			</div>
+		</div>
+
+		<!-- BEGIN PAGE CONTENT-->
+		<div class="row-fluid">
+			<!-- BEGIN SAMPLE TABLE PORTLET-->
+			<div class="portlet box green">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="icon-cogs"></i>今日营业数据表
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a> <a
+							href="#portlet-config" data-toggle="modal" class="config"></a> <a
+							href="javascript:;" class="reload" id="renterReload"></a> <a
+							href="javascript:;" class="remove"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+					<table class="table table-hover">
+						<thead>
+							<tr role="row">
+								<th>订单号</th>
+								<th>成交时间</th>
+								<th>成交金额</th>
+								<th>公寓名</th>
+								<th>公寓地址</th>
+								<th>销售员</th>
+
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody id="tbodyId">
+							<tr>
+								<td colspan="9"
+									style="text-align: left; border: none; font-size: medium;">
+									正在努力加载数据&nbsp;<img src="./media/image/loading.gif"
+									align="middle">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div id="pageId" class="pagination pagination-right"
+						style="white-space: nowrap"></div>
+				</div>
+			</div>
+			<!-- END SAMPLE TABLE PORTLET-->
+
+			<!-- END BORDERED TABLE PORTLET-->
+		</div>
+		<!-- END PAGE CONTENT-->
+	</div>
+</div>
+<!-- END PAGE CONTAINER-->
+<script type="text/javascript">
+	$(function() {
+		/*异步加载分页页面  
+		 *1) 当load函数异步请求结束后再执行doGetObjects
+		 */
+		//获取统计信息
+		doGetAccountCountInfo();
+		$("#pageId").load("doPageUI", doGetObjects); //方法后不写(),否则不是加载完后执行 ,注意多线程	
+		$(".input-append").on("click", "#searchClick", doQueryObjects).on(
+				"click", ".btn-delete", doDeleteObject)
+		$("#renterReload").on("click", doQueryObjects);
+		//thead中checkBox事件绑定
+		$("#checkAll").change(doChangeTBodyCheckBoxState);
+		//tbody中checkbox对象事件注册
+		$("#tbodyId").on("change", ".cBox", doChangeTHeadCheckBoxState).on(
+				"click", "#historyId", doLoadPersonOrderListUI)
+		$("#reloadPageId").click(function() {
+			$(".page-content").load("account/doAccountListUI");
+		});
+	})
+	function doLoadPersonOrderListUI() {
+		//1.params
+		let id = $(this).parents("tr").data("id");
+		console.log("id:" + id);
+		$("#personId").data("id", id);
+		//2.url
+		//var url="user/doFindObjectById";
+		$("#boxInfoId").load("renter/doLoadPersonOrderListUI");
+	}
+	function doChangeTHeadCheckBoxState() {
+		//1.默认初始为真,
+		var flag = true;
+		$("#tbodyId input[type='checkbox']").each(function() {
+			//全选为真,有一个或多个不选为假
+			flag = flag && $(this).prop("checked")
+		});
+		$("#checkAll").prop("checked", flag);
+	}
+	function doChangeTBodyCheckBoxState() {
+		//1.获取全选对象当前状态
+		let flag = $(this).prop("checked");
+		//2.修改tbody中checkbox对象的状态值
+		$("#tbodyId input[type= 'checkbox']").each(function() {
+			$(this).prop("checked", flag);
+		})
+	}
+	function doDeleteObject() {
+		//1.获取选中记录的id并校验
+		let idArray = doGetCheckIds();
+		if (idArray.length == 0) {
+			alert("请先选中要删除的日志");
+			return;
+		}
+		console.log(idArray);
+		//2.提示是否删除
+		if (!confirm("确认删除吗？"))
+			return; //windows函数
+		//3.定义删除的url
+		var url = "log/doDeleteObjects";
+		//4.定义删除时要传递的参数
+		var params = {
+			"ids" : idArray.toString()
+		};
+		//5.执行异步删除业务
+		$.post(url, params, function(result) {
+			if (result.state == 1) {
+				alert(result.message);
+				//刷新策略(重新查询,清空tbody内容)
+				doRefresh();
+			} else {
+				alert(result.message);
+			}
+			doRefresh();
+		});
+	}
+	/**修改当前页码值*/
+	function doRefresh() {
+		//1.获取当期页码值
+		let pageCurrent = $("#pageId").data("pageCurrent"); //data域中的值
+		let pageCount = $("#pageId").data("pageCount"); //data域中的值
+
+		//2.获取checkAll的状态值
+		let flag = $("#checkAll").prop("checked");
+		if (pageCurrent == pageCount && flag && pageCurrent == 1) {
+			$("#tbodyId").empty();
+			doSetInition();
+			return;
+		}
+		//3.修改当前页码值
+		if (pageCurrent != 1 && flag && pageCurrent == pageCount) {
+			pageCurrent--;
+			$("#pageId").data("pageCurrent", pageCurrent);
+		}
+		doGetObjects();
+		/* if(pageCount==0){
+			$("#tbodyId").empty();
+		} */
+	}
+	function doGetCheckIds() {
+		//1.定义数组用于存储Id
+		let array = [];//new Array[]
+		//2.遍历所有CheckBox获得选中的id存数
+		$("#tbodyId input[type='checkbox']").each(function() {//发现checkBox则执行
+			if ($(this).prop("checked")) {
+				array.push($(this).val())
+			}
+		});
+		//返回存储被选中的id数组
+		return array;
+	}
+	/**统计平台租客信息*/
+	function doGetAccountCountInfo() {
+		//$("#checkAll").prop("checked",false);
+		//1.定义请求的url
+		const url = "account/doAccountAmount"; //常量不可修改
+		//3.发送异步请求(借助jquery中的ajax函数)
+		$.getJSON(url, function(result) {
+			console.log(result);
+			$("#account").empty();
+			$("#account").append(result.data);
+		});
+	}
+	
+	function doQueryObjects() {
+		//1.初始化
+		$("#pageId").data("pageCurrent", 1);
+		$("#pageId").data("pageSize", 0);
+		//基于当前用户名查询日志信息
+		doGetObjects();
+	}
+	/*异步查询财务信息  */
+	function doGetObjects() { //注意文档就绪事件,
+		//$("#checkAll").prop("checked",false);
+		//1.定义请求的url
+		const url = "account/doFindPageObjects"; //常量不可修改
+		//2.定义请求的参数
+		//debugger
+		var pageCurrent = $("#pageId").data("pageCurrent"); //data域中的值
+		var pageSize = $("#pageId").data("pageSize"); //data域中的值
+		if (!pageCurrent)
+			pageCurrent = 1;
+		var params = {
+			"pageCurrent" : pageCurrent
+		} //json格式对象 "pageCurrent=1"
+		console.log(params);
+		//3.发送异步请求(借助jquery中的ajax函数)
+		$.getJSON(url, params, function(result) {
+			console.log(result);
+			doHandleResponseResult(result)
+		});
+	}
+	function doHandleResponseResult(result) {
+		if (result.state == 1) {
+			$("#pageId").data("pageSize", result.data.pageSize);
+			$("#pageId").data("pageCurrent", result.data.pageCurrent)
+			//1.将租客信息记录添加到tbody中
+			doSetTableBodyRows(result.data.records); //错误records 不是json格式
+			//2.将租客信息分页信息添加到pageId位置
+			doSetPagination(result.data)
+		} else {
+			let tBody = $("#tbodyId");
+			tBody.empty();
+			$(".rowCount").html("总记录数(0)");
+			$(".pageCount").html("总页数(0)");
+			$(".pageCurrent").html("当前页(1)");
+			$("#checkAll").prop("checked", false);
+			//let tr = $("<tr></tr>");
+			let td = "<span class="+"sale-num"+">" + "无数据记录!" + "</span>";
+			//tr.append(td);
+			tBody.append(td);
+			//alert(result.message);
+		}
+	}
+	function doSetTableBodyRows(records) {
+		//1.获取tbody对象，并清空记录
+		let tBody = $("#tbodyId"); //错误大括号  //let局部作用域   es6的语法
+		tBody.empty();
+		//2.迭代日志记录
+		for (let i = 0; i < records.length; i++) {
+			//2.1创建tr对象
+			let tr = $("<tr></tr>");
+			tr.data("id", records[i].id);
+			//2.2创建多个td对象(列)
+			let tds = doCreateTds(records[i], i);
+			//2.3将创建的td追加到tr对象
+			tr.append(tds)
+			//2.4将tr对象追加到tbody中
+			tBody.append(tr);
+		}
+	}
+	function doCreateTds(data) {
+		
+		//<span class="label label-success">Approved</span>
+		var pageCurrent = $("#pageId").data("pageCurrent"); //data域中的值
+		var pageSize = $("#pageId").data("pageSize"); //data域中的值
+		let tds = "<td>" + data.id + "</td>" + "<td>" +new Date(data.handledTime).toLocaleString() + "</td>"
+				+ "<td>￥" + data.money+ "</td>" + "<td>" + data.apName
+				+ "</td>" + "<td>" + data.apAddr + "</td>"
+				+ "<td>"
+				+ data.staffName
+				+ "</td>"
+				+ "<td ><a id='' class='btn mini green' ><i class='icon-table'></i>&nbsp;计入报表</a></td>";
+		return tds;
+	}
+</script>

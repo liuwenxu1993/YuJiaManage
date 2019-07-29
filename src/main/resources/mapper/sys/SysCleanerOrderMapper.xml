@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yj.sys.dao.SysCleanerOrderDao">
+
+	<sql id="searchOrder">
+		<where>
+			<if test="order==null and order==''">
+				A.id like concat("%",#{order},"%")
+			</if>
+		</where>
+	</sql>
+
+	<select id="findPageObjects"
+		resultType="com.yj.sys.entity.SysCleanerOrder">
+		select 
+		A.id as id,
+		A.createtime as createdTime,
+		A.servicetime as serviceTime,
+		C.name as renterName,
+		A.renterphone as renterPhone,
+		B.addr as renterAddr,
+		D.name as cleanerName,
+		A.money as money,
+		A.status as status
+		from sys_serorder A
+		left outer join sys_ap B on A.apid=B.id
+		left outer join sys_renter C on A.renterphone=C.phone
+		left outer join sys_cleaner D on A.cleanerid=D.id
+		order by A.createtime desc
+		limit #{startIndex},#{pageSize}
+	</select>
+	<select id="getRowCount" resultType="int">
+		select count(*) from sys_serorder
+	</select>
+
+</mapper>

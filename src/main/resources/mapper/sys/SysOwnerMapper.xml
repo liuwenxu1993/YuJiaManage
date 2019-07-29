@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yj.sys.dao.SysOwnerDao">
+	<sql id="sysOwnerInfo">
+		id,name,gender,t1.phone,id_number,register_time,ap_number
+	</sql>
+<sql id="querywhereNameOrTel">
+		<where> <!--内部if成立,则添加一个where,否则where不添加  -->
+			<if test="name!=null and name!=''">	 <!--动态sql -->
+				t1.name like concat("%",#{name},"%") or t1.phone like concat("%",#{name},"%")
+			</if>
+		</where> 
+	</sql>
+	<!--  查询业主信息及公寓数  -->
+	<select id="doFindPageObjects" resultType="com.yj.sys.entity.SysOwner"> 
+		select * from sys_owner t1 
+		left join 
+		( select count(*) apNumber,phone 
+		  from sys_ap 
+		  group by phone
+		) t2 
+		on t1.phone = t2.phone <include refid="querywhereNameOrTel"/>
+		order by register_time desc 
+		limit #{startIndex},#{pageSize}
+	</select>
+	
+	<!-- 业主数目 -->
+	<select id="getRowCounts" resultType="int">
+		select count(*) rowCount from sys_owner t1 <include refid="querywhereNameOrTel"/>
+	</select>
+</mapper>

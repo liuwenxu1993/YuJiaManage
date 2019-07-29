@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.yj.sys.dao.SysLogDao">
+	<sql id="qureyWhereId">
+		<where>
+			<if test="username!=null and username!=''">
+				username like concat("%",#{username},"%")
+			</if>
+		</where>
+	</sql>
+
+	<!-- 动态sql中的foreach -->
+	<delete id="deleteObjects">
+		delete from sys_logs where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">
+			#{id}
+		</foreach>
+	</delete>
+
+
+	<select id="findPageObjects"
+		resultType="com.yj.sys.entity.SysLog">
+		select * from sys_logs
+		<include refid="qureyWhereId"></include>
+		order by createdTime desc
+		limit #{startIndex},#{pageSize}
+	</select>
+	
+	<select id="getRowCount" resultType="int">
+		select count(*) from sys_logs
+		<include refid="qureyWhereId"></include>
+	</select>
+
+	<insert id="insertObject">
+		insert into sys_logs
+		(username,operation,method,params,time,ip,createdTime)
+		values
+		(#{username},#{operation},#{method},#{params},#{time},#{ip},#{createdTime})
+	</insert>
+
+</mapper>

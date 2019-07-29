@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yj.sys.dao.SysRenterApOrderDao">
+	<!--sql元素一般用于定义共性sql语句 -->
+	<!--租客档案管理需要获取的字段  -->
+	<sql id="RenterDocumentInfo">
+		id,name,gender,phone,id_number,t4.status status,created_time,addr 
+	</sql>
+	<sql id="querywhereNameOrTel">
+		<where> <!--内部if成立,则添加一个where,否则where不添加  -->
+			<if test="name!=null and name!=''">	 <!--动态sql -->
+				name like concat("%",#{name},"%") or phone like concat("%",#{name},"%")
+			</if>
+		</where> 
+	</sql>
+	<!--查询所有租客信息及其预约信息-->
+	<!--优先级:成交>预约>作废>时间降序排序  -->
+	<!--1.按交易状态及租客id、交易时间排序  -->
+	<!--2.按租客id分组 (取第一条最近成交数据),重新整合订单数据  -->
+	<!--3.根据订单数据获取公寓信息  -->
+	<!--4.按页根据订单数据查找租客信息及其公寓信息  -->
+	<select id="doFindPageObjects" resultType="com.yj.sys.common.vo.RenterApOrderVo">
+		select <include refid="RenterDocumentInfo"/> 
+		from sys_renter t1 
+		left join 
+		(select addr,renter_id,t2.status status,t2.created_time created_time 
+		 from 
+		 	(select * from  
+			   (select * from sys_aporder  
+			    order by renter_id desc,field(status,'成交','预约','作废'),created_time desc
+		 	   ) t5 
+		 	 group by t5.renter_id 
+		 ) t2 
+		 left join sys_ap t3 on t2.ap_id = t3.id
+		) t4 
+		on t4.renter_id = t1.id 
+		<include refid="querywhereNameOrTel"/>
+		limit #{startIndex},#{pageSize}
+	</select>
+	<!--查询历史订单详情  -->
+	<!--1.根据租客id查询公寓及订单信息  -->
+	<!--2.根据租客id查询右连接上表查询租客及公寓订单信息  -->
+	<!--3.时间降序,分页  -->
+	<select id="doFindPersonOrderHistoryById" resultType="com.yj.sys.common.vo.RenterOrderHistory">
+		select t1.name username,t1.phone,t4.* 
+		from sys_renter t1  
+		right join  
+		  (select t2.id orderId,renter_id,t2.created_time,t2.status,t2.staff_id,t3.name apname, t3.addr,t3.type,t3.place,t3.price 
+		   from sys_aporder t2  
+		   join sys_ap t3 on t2.ap_id = t3.id 
+		   where t2.renter_id = #{id}
+		  ) t4 
+		on t1.id = t4.renter_id 
+		order by t4.created_time desc 
+		limit #{startIndex},#{pageSize}
+	</select>
+</mapper>

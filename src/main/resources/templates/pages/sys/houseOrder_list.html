@@ -1,0 +1,219 @@
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="box">
+					<h3 class="page-title">
+			<font style="vertical-align: inherit;"><font
+				style="vertical-align: inherit;">公寓订单预约处理</font></font>
+		</h3>
+		<ul class="breadcrumb">
+			<li><i class="icon-table"></i> <a href="/"><font
+					style="vertical-align: inherit;"><font
+						style="vertical-align: inherit;">业务处理中心</font></font></a> <i
+				class="icon-angle-right"></i></li>
+			<li><a href="/"><font style="vertical-align: inherit;"><font
+						style="vertical-align: inherit;">公寓订单预约处理</font></font></a></li>
+		</ul>
+				<!-- /.box-header -->
+				<div class="box-body table-responsive no-padding">
+					<form>
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>序号</th>
+									<th>预约时间</th>
+									<th>公寓名</th>
+									<th>地址</th>
+									<th>类型</th>
+									<th>面积</th>
+									<th>价格</th>
+									<th>业主</th>
+									<th>业主电话</th>
+									<th>预约人</th>
+									<th>预约人电话</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody id="tbodyId">
+							</tbody>
+						</table>
+					</form>
+				</div>
+				<!-- /.box-body -->
+				<div id="pageId"
+					class="pagination pagination-sm no-margin pull-right"></div>
+			<!-- /.box -->
+		</div>
+	</div>
+</div>
+</div>
+<script type="text/javascript">
+   $(function(){
+	  $("#pageId").load("houseOrder/doPageUI",function(){
+		  doGetObjects();
+	  });
+	//  $(".input-group-btn")
+	 // .on("click",".btn-search",doQueryObjects)
+	  //.on("click",".btn-add",doLoadEditUI)
+      
+	  $("#tbodyId")
+	  .on("click",".btn-delete",doCancellationObject)
+	  .on("click",".btn-update",doPutInObject)
+   });
+   
+  /* function doLoadEditUI(){
+	   var title;
+	   if($(this).hasClass('btn-add')){
+		   title="��ӽ�ɫ";
+		   doLoadPageUI(title);
+	   }else{
+		   title="�޸Ľ�ɫ"
+		   var id=$(this).parents("tr").data("id");
+		   var params={"id":id};
+		   var url="role/doFindObjectById";
+		   $.getJSON(url,params,function(result){
+			   if(result.state==1){
+				  result.data.id=id;//�ڽ���ж�̬׷��id
+				  $("#mainContentId").data("data",result.data);
+				  doLoadPageUI(title);//�첽����ҳ��  
+			   }else{
+				  alert(result.message); 
+			   }
+		   });
+	   }
+   }
+   function doLoadPageUI(title){
+	   var url="role/doRoleEditUI"
+	   $("#mainContentId")
+	   .load(url,function(){
+		   $(".box-title").html(title);
+	   })
+   }
+   
+   */
+   function doPutInObject(){
+	   //1.params
+	   var id=$(this).parents("tr").data("id");
+	   var renterPhone=$(this).parents("tr").data("renterPhone");
+	   var params={"id":id,"renterPhone":renterPhone};
+	   console.log(params);
+	   //2.url
+	   var url="houseOrder/doUpdatePutIn"
+	   //3.ajax request
+	   $.post(url,params,function(result){
+		   if(result.state==1){
+			   alert(result.message);
+			   doGetObjects();
+		   }else{
+			   alert(result.message);
+		   }
+	   })
+	   
+   }
+   
+   function doCancellationObject(){
+	   //1.params
+	   var id=$(this).parents("tr").data("id");
+	   
+	   var params={"id":id};
+	   console.log(params);
+	   //2.url
+	   var url="houseOrder/doUpdateObject"
+	   //3.ajax request
+	   $.post(url,params,function(result){
+		   if(result.state==1){
+			   alert(result.message);
+			   doGetObjects();
+		   }else{
+			   alert(result.message);
+		   }
+	   })
+	   
+   }
+   function doQueryObjects(){
+	   $("#pageId").data("pageCurrent",1);
+	   doGetObjects();
+   }
+function doGetObjects(){
+	   
+	   //1.params
+	   //获取在Page.html中绑定的当前页码值
+	   var pageCurrent=$("#pageId").data("pageCurrent");
+	   //假如没有值,设置初始值为1
+	   if(!pageCurrent)pageCurrent=1;
+	   //var params="pageCurrrent="+pageCurrent;
+	   var params={"pageCurrent":pageCurrent};
+	   console.log(pageCurrent);
+	   //获取查询时用户输入的名字
+	   //var name=$("#searchNameId").val();
+	   //if(name)params.name=name;
+	   //2.url
+	   var url="houseOrder/doFindPageObjects";
+	   //3.ajax request
+	   console.log(params);
+	   $.getJSON(url,params,function(result){
+		   doHandleResponseResult(result);
+	   });
+   }
+   function doHandleResponseResult(result){
+	   
+	   if(result.state==1){
+		  doSetTableBodyRows(result.data.records);
+		  doSetPagination(result.data);
+	   }else{
+		  doSetTableBodyErrors(result.message);
+	   }
+   }
+   function doSetTableBodyErrors(message){
+	   //获取body对象并清空
+	   var tBody=$("#tbodyId");
+	   tBody.empty();
+	   //创建tr对象
+	   var tr=$("<tr></tr>");
+	   //创建td对象
+	   //var len=$("table thead").find("tr").find("th").length;
+	   var len=$("table th").length;
+	   var td=$("<td></td>");
+	   td.prop("colspan",len);
+	   td.append(message);
+	   tr.append(td);
+	   //将tr追加到tbody
+	   tBody.append(tr);
+   }
+   function doSetTableBodyRows(records){
+	   
+	  //获取tbody对象,并清空
+	   var tBody=$("#tbodyId");
+	   tBody.empty();
+	   //2.迭代数据,并追加到tBody
+	   for(var i in records){
+		  //2.1构建tr对象
+		  var tr=$("<tr></tr>");
+		  tr.data("id",records[i].id);
+		  tr.data("renterPhone",records[i].renterPhone);
+		  //2.2构建tds对象
+		  var tds=doCreateTds(records[i],i);
+		  //2.3将tds对象追加到tr中
+		  tr.append(tds);
+		  //2.4将tr追加到tbody中
+		  tBody.append(tr);
+	   }
+   }
+   function doCreateTds(row,i){
+	   var tds=
+       "<td>"+(parseInt(i)+1)+"</td>"+
+	   "<td>"+new Date(row.createdTime).toLocaleString()+"</td>"+
+       "<td>"+row.apName+"</td>"+
+       "<td>"+row.apAddr+"</td>"+
+       "<td>"+row.apType+"</td>"+
+       "<td>"+row.apPlace+"</td>"+
+       "<td>"+row.apPrice+"</td>"+
+       "<td>"+row.ownerName+"</td>"+
+       "<td>"+row.ownerPhone+"</td>"+
+       "<td>"+row.renterName+"</td>"+
+       "<td>"+row.renterPhone+"</td>"+
+       "<td><a class='btn-update'>提交</a>"+
+       "&nbsp;<a class='btn-delete'>作废</a></td>";
+       return tds;
+   }
+</script>

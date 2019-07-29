@@ -1,0 +1,269 @@
+<div class="container-fluid">
+<div class="row-fluid">
+	<div class="span12">
+		<h3 class="page-title">
+			<font style="vertical-align: inherit;"><font
+				style="vertical-align: inherit;">清洁服务订单处理</font></font>
+		</h3>
+		<ul class="breadcrumb">
+			<li><i class="icon-table"></i> <a href="/"><font
+					style="vertical-align: inherit;"><font
+						style="vertical-align: inherit;">业务处理中心</font></font></a> <i
+				class="icon-angle-right"></i></li>
+			<li><a href="/"><font style="vertical-align: inherit;"><font
+						style="vertical-align: inherit;">清洁服务订单处理</font></font></a></li>
+		</ul>
+	</div>
+	<div class="row-fluid portfolio-block">
+		<div class="span5 portfolio-text">
+			<img src="media/image/logo_azteca.jpg" alt="">
+			<div class="portfolio-text-info">
+				<h4>
+					<font style="vertical-align: inherit;"><font
+						style="vertical-align: inherit;">服务订单汇总</font></font>
+				</h4>
+				<p>
+					<font style="vertical-align: inherit;"><font
+						style="vertical-align: inherit;">好服务!好生活!</font></font>
+				</p>
+			</div>
+		</div>
+		<div class="span5">
+			<div class="portfolio-info">
+				<font style="vertical-align: inherit;"><font
+					style="vertical-align: inherit;"> 已审订单 </font></font><span><font
+					style="vertical-align: inherit;">
+					<font class="yes" style="vertical-align: inherit;">0</font></font></span>
+			</div>
+			<div id="countNot" class="portfolio-info">
+				<font style="vertical-align: inherit;">
+				<font  style="vertical-align: inherit;"> 未审订单 </font>
+					</font>
+					<span>
+					<font style="vertical-align: inherit;">
+					<font class="not" style="vertical-align: inherit;">0</font>
+					</font>
+					</span>
+			</div>
+			<div id="countAll" class="portfolio-info">
+				<font style="vertical-align: inherit;"><font
+					style="vertical-align: inherit;"> 总订单 </font></font><span><font
+					style="vertical-align: inherit;">
+					<font class="all" style="vertical-align: inherit;">0</font></font></span>
+			</div>
+		</div>
+		<div class="span2 portfolio-btn">
+			<a href="#" class="btn bigicn-only"><span><font
+					style="vertical-align: inherit;"><font
+						style="vertical-align: inherit;">刷新</font></font></span></a>
+		</div>
+	</div>
+	<div class="span10">
+		<div class="inbox-header">
+			<form action="#" class="form-search">
+				<div class="input-append btn-order" style="margin-right: 10px">
+					<input id="searchOrderId" class="m-wrap" type="text"
+						placeholder="Search Order">
+					<button class="btn green" type="button">
+						<font style="vertical-align: inherit;"><font
+							style="vertical-align: inherit;">搜索</font></font>
+					</button>
+				</div>
+				<div class="input-append btn-time">
+					<input class="m-wrap" type="text" placeholder="Search Time">
+					<button class="btn green" type="button">
+						<font style="vertical-align: inherit;"><font
+							style="vertical-align: inherit;">搜索</font></font>
+					</button>
+				</div>
+				<div class="input-append" style="margin-left: 60px">
+					<button class="btn green" type="button">
+						<font style="vertical-align: inherit;"><font
+							style="vertical-align: inherit;">筛选</font></font>
+					</button>
+				</div>
+				<div class="input-append pull-right">
+					<button class="btn green" type="button">
+						<font style="vertical-align: inherit;"><font
+							style="vertical-align: inherit;">状态</font></font>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="portlet box yellow">
+		<div class="portlet-title">
+			<div class="caption">
+				<i class="icon-coffee"></i> <font style="vertical-align: inherit;">
+					<font style="vertical-align: inherit;">清洁服务订单表</font>
+				</font>
+			</div>
+			<div class="tools">
+				<a href="javascript:;" class="collapse"></a> 
+				<a href="#portlet-config" data-toggle="modal" class="config"></a> 
+				<a href="javascript:;" class="reload"></a> 
+					<a href="javascript:;"class="remove"></a>
+			</div>
+		</div>
+		<div class="portlet-body">
+			<table class="table table-bordered table-hover">
+				<thead>
+					<tr>
+						<th><font style="vertical-align: inherit;"><font
+								style="vertical-align: inherit;">订单编号</font></font></th>
+						<th><font style="vertical-align: inherit;"><font
+								style="vertical-align: inherit;">下单时间</font></font></th>
+						<th><font style="vertical-align: inherit;"><font
+								style="vertical-align: inherit;">预约时间</font></font></th>
+						<th class="hidden-480"><font style="vertical-align: inherit;"><font
+								style="vertical-align: inherit;">用户名</font></font></th>
+						<th class="hidden-480"><font style="vertical-align: inherit;"><font
+								style="vertical-align: inherit;">用户电话</font></font></th>
+						<th class="hidden-480"><font style="vertical-align: inherit;"><font
+								style="vertical-align: inherit;">用户地址</font></font></th>
+						<th class="hidden-480"><font style="vertical-align: inherit;"><font
+								style="vertical-align: inherit;">服务人员</font></font></th>
+						<th class="hidden-480"><font style="vertical-align: inherit;"><font
+								style="vertical-align: inherit;">服务金额</font></font></th>
+						<th class="hidden-480"><font style="vertical-align: inherit;"><font
+								style="vertical-align: inherit;">服务状态</font></font></th>
+						<th><font style="vertical-align: inherit;"><font
+								style="vertical-align: inherit;">操作</font></font></th>
+					</tr>
+				</thead>
+				<tbody id="tbodyId">
+
+				</tbody>
+				
+			</table>
+			
+		</div>
+		<div id="pageId" class="pagination pagination-sm no-margin pull-right">
+		</div>
+	</div>
+</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	 $("#pageId").load("cleaner/doPageUI",function(){
+		  doGetObjects();
+	  });
+	 $(".tools")
+	  .on("click",".reload",doQueryObjects)
+	  //.on("click",".btn-add",doLoadEditUI)
+	  $(".span5").load(function(){
+				  doSetCountAll();
+			  });
+	 
+});
+
+function doSetCountAll(){	 
+}
+
+function doQueryObjects(){
+	   $("#pageId").data("pageCurrent",1);
+	   doGetObjects();
+}
+
+function doGetObjects(){
+	//1.获得页码值
+	var pageCurrent=$("#pageId").data("pageCurrent");
+	//var pageCurrent=("#pageId").data("pageCurrent");
+	//2.设置pageCurrent初始值
+	if(!pageCurrent)pageCurrent=1;
+	//3.存入params
+	var params={"pageCurrent":pageCurrent};
+	//4.获取搜索单号
+	//var order=$("#searchOrderId").val();
+	//if(order)params.order=order;
+	//2.url
+	   var url="cleaner/doFindPageObjects";
+	   //3.ajax request
+	  console.log(params);
+	   $.getJSON(url,params,function(result){
+		  doHandleResponseResult(result);
+	   });
+};
+
+function doHandleResponseResult(result){
+	   
+	   if(result.state==1){
+		  doSetTableBodyRows(result.data.records);
+		  doSetPagination(result.data);
+	   }else{
+		  doSetTableBodyErrors(result.message);
+	   }
+}
+function doSetTableBodyErrors(message){
+	   //获取body对象并清空
+	   var tBody=$("#tbodyId");
+	   tBody.empty();
+	   //创建tr对象
+	   var tr=$("<tr></tr>");
+	   //创建td对象
+	   //var len=$("table thead").find("tr").find("th").length;
+	   var len=$("table th").length;
+	   var td=$("<td></td>");
+	   td.prop("colspan",len);
+	   td.append(message);
+	   tr.append(td);
+	   //将tr追加到tbody
+	   tBody.append(tr);
+}
+function doSetTableBodyRows(records){
+	   
+	  //获取tbody对象,并清空
+	   var tBody=$("#tbodyId");
+	   tBody.empty();
+	   //2.迭代数据,并追加到tBody
+	   for(var i in records){
+		  //2.1构建tr对象
+		  var tr=$("<tr></tr>");
+		  tr.data("id",records[i].id);
+		  //2.2构建tds对象
+		  var tds=doCreateTds(records[i],i);
+		  //2.3将tds对象追加到tr中
+		  tr.append(tds);
+		  //2.4将tr追加到tbody中
+		  tBody.append(tr);
+	   }
+}
+function doCreateTds(row,i){
+	   var tds=
+    "<td>"+row.id+"</td>"+
+	"<td>"+new Date(row.createdTime).toLocaleString()+"</td>"+
+    "<td>"+new Date(row.serviceTime).toLocaleString()+"</td>"+
+    "<td>"+row.renterName+"</td>"+
+    "<td>"+row.renterPhone+"</td>"+
+    "<td>"+row.renterAddr+"</td>"+
+    "<td>"+row.cleanerName+"</td>"+
+    "<td>"+row.money+"</td>"+
+    "<td>"+row.status+"</td>"+
+    "<td><a class='btn-update'>提交</a>"+
+    "&nbsp;<a class='btn-delete'>作废</a></td>";
+    return tds;
+}
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

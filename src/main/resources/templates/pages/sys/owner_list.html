@@ -1,0 +1,331 @@
+<div class="container-fluid" style="background-color: #ECF0F5;">
+	<!-- BEGIN PAGE HEADER-->
+	<div class="row-fluid" id="personId">
+		<div class="span12">
+			<!-- BEGIN PAGE TITLE & BREADCRUMB-->
+			<h3 class="page-title">
+				业主档案管理 
+			</h3>
+			<ul class="breadcrumb">
+				<li><i class="icon-briefcase"></i> <a href="\">档案管理</a> <i
+					class="icon-angle-right"></i></li>
+				<li id="title-index"><a id="reloadPageId">业主档案管理</a></li>
+			</ul>
+			<!-- END PAGE TITLE & BREADCRUMB-->
+			<div id="historyInfoCountId"></div>
+		</div>
+	</div>
+
+	<div id="boxInfoId">
+		<!-- END PAGE HEADER-->
+		<div class="span4" style="width: 97%;">
+			<div class="portlet sale-summary" style="width: 130%;">
+				<div class="portlet-title">
+					<div class="caption">业主统计信息概览</div>
+					<div class="tools">
+						<a class="reload" href="javascript:;"></a>
+					</div>
+				</div>
+				<ul class="unstyled" style="white-space: nowrap">
+					<li style="float: left; display: inline-block;"><span
+						class="sale-info" style="font-size: medium;">平台业主总量:</span> <span
+						class="sale-num" id="ownerCountId"> <a class="sale-num">/</a></span></li>
+					<li style="float: left; display: inline-block; padding-left: 65px"><span
+						class="sale-info" style="font-size: medium;">平台公寓总量:</span> <span
+						class="sale-num" id="apCountId">/</span></li>
+					<li style="float: left; display: inline-block; padding-left: 65px"><span
+						class="sale-info" style="font-size: medium;">在租公寓数量:</span> <span
+						class="sale-num" id="onRentApCountId"><a href="">/</a></span></li>
+					<li style="float: left; display: inline-block; padding-left: 65px"><span
+						class="sale-info" style="font-size: medium;">本月新增注册业主:</span> <span
+						class="sale-num" id="riseOwnerCountId">/</span></li>
+				</ul>
+			</div>
+		</div>
+		<div>
+			<table>
+				<tr>&emsp;
+				</tr>
+			</table>
+		</div>
+		<div class="input-append"
+			style="float: left; display: inline-block; padding-left: 5px">
+			<input id="searchNameId" class="m-wrap" type="text"
+				placeholder="输入名字或联系电话" style="width: 75%;">
+			<button id="searchClick" class="btn green" type="button"
+				style="background-color: #C9C9C9;">
+				<img alt="" src="./media/image/hor-menu-search.png">
+			</button>
+		</div>
+
+		<!-- BEGIN PAGE CONTENT-->
+		<div class="row-fluid">
+			<!-- BEGIN SAMPLE TABLE PORTLET-->
+			<div class="portlet box blue">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="icon-cogs"></i>业主信息表
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a> <a
+							href="#portlet-config" data-toggle="modal" class="config"></a> <a
+							href="javascript:;" class="reload" id="renterReload"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+					<table class="table table-hover">
+						<thead>
+							<tr role="row">
+								<th>序号</th>
+								<th>姓名</th>
+								<th>性别</th>
+								<th>联系电话</th>
+								<th>身份证号</th>
+								<th>注册时间</th>
+								<th>公寓总数</th>
+								<th style="margin: auto;">操作</th>
+							</tr>
+						</thead>
+						<tbody id="tbodyId">
+							<tr>
+								<td colspan="9"
+									style="text-align: left; border: none; font-size: medium;">
+									正在努力加载数据&nbsp;<img src="./media/image/loading.gif"
+									align="middle">
+								</td>
+						</tbody>
+					</table>
+					<div id="pageId" class="pagination pagination-right" style="white-space: nowrap"></div>
+				</div>
+			</div>
+			<!-- END SAMPLE TABLE PORTLET-->
+
+			<!-- END BORDERED TABLE PORTLET-->
+		</div>
+		<!-- END PAGE CONTENT-->
+	</div>
+</div>
+<!-- END PAGE CONTAINER-->
+<script type="text/javascript">
+  	$(function(){
+  		/*异步加载分页页面  
+  	     *1) 当load函数异步请求结束后再执行doGetObjects
+  		*/
+  		//获取统计信息
+  		doGetOwnerCountInfo();
+  		$("#pageId").load("doPageUI",doGetObjects); //方法后不写(),否则不是加载完后执行 ,注意多线程	
+  		$(".input-append").on("click","#searchClick",doQueryObjects)
+  		$("#tbodyId").on("click","#deleteId",doDeleteOwnerAp);
+  		$("#renterReload").on("click",doQueryObjects);
+  		//thead中checkBox事件绑定
+  		$("#checkAll").change(doChangeTBodyCheckBoxState);
+  		//tbody中checkbox对象事件注册
+  		$("#tbodyId").on("change",".cBox",doChangeTHeadCheckBoxState)
+  		//个人公寓详情点击事件绑定
+  		.on("click","#ownerApInfoId",doLoadPersonApListUI)
+  		$("#reloadPageId").click(function(){
+  			$(".page-content").load("owner/doOwnerListUI");
+  		});
+  	})
+  	/**异步加载个人公寓详情页面*/
+  	function doLoadPersonApListUI(){
+  		 //1.params
+  	    let phone = $(this).parents("tr").data("phone");
+  		console.log("phone:"+phone);
+ 	   $("#personId").data("phone",phone);
+ 	   //2.url
+ 	   //var url="user/doFindObjectById";
+  	   $("#boxInfoId").load("owner/doLoadPersonApListUI");
+  	}
+  	function doChangeTHeadCheckBoxState(){
+  		//1.默认初始为真,
+  		var flag = true;
+  		$("#tbodyId input[type='checkbox']").each(function(){
+  			//全选为真,有一个或多个不选为假
+  			flag = flag && $(this).prop("checked") 
+  		});
+  		$("#checkAll").prop("checked",flag);
+  	}
+  	function doChangeTBodyCheckBoxState(){
+  		//1.获取全选对象当前状态
+  		let flag = $(this).prop("checked");
+  		//2.修改tbody中checkbox对象的状态值
+  		$("#tbodyId input[type= 'checkbox']")
+  		.each(function(){
+  			$(this).prop("checked",flag);
+  		})
+  	}
+  	function doDeleteOwnerAp(){
+  		//1.获取选中记录的id并校验
+  		let phone = $(this).parents("tr").data("phone");
+  		console.log("phone:"+phone);
+  		//2.提示是否删除
+  		if(!confirm("确认删除吗？")) return;  //windows函数
+  		//3.定义删除的url
+  		var url = "owner/doDeleteOwnerAp";
+  		//4.定义删除时要传递的参数
+  		var params = {"phone":phone};
+  		//5.执行异步删除业务
+  		$.post(url,params,function(result){
+  			if(result.state==1){
+  				alert("删除成功！");
+  				//刷新策略(重新查询,清空tbody内容)
+  				doRefresh();
+  			}else{
+  				alert(result.message);
+  			}
+  			doRefresh();
+  		});
+  	}
+  	/**修改当前页码值*/
+  	function doRefresh(){
+  		//1.获取当期页码值
+  		let pageCurrent = $("#pageId").data("pageCurrent");  //data域中的值
+  		let pageCount = $("#pageId").data("pageCount");  //data域中的值
+  		
+  		//2.获取checkAll的状态值
+  		let flag = 'true';
+  		if(pageCurrent==pageCount&&flag&&pageCurrent==1){
+  			$("#tbodyId").empty();
+  			doSetInition();
+  			return;
+  		}
+  		//3.修改当前页码值
+  		if(pageCurrent!=1&&flag&&pageCurrent==pageCount){
+  			pageCurrent--;
+  			$("#pageId").data("pageCurrent",pageCurrent);
+  		}
+  		doGetObjects();
+  		/* if(pageCount==0){
+  			$("#tbodyId").empty();
+  		} */
+  	}
+  	function doGetCheckIds(){
+  		//1.定义数组用于存储Id
+  		let array=[];//new Array[]
+  		//2.遍历所有CheckBox获得选中的id存数
+  		$("#tbodyId input[type='checkbox']")
+  		.each(function(){//发现checkBox则执行
+  			if($(this).prop("checked")){
+  				array.push($(this).val())
+  			}
+  		});
+  		//返回存储被选中的id数组
+  		return array;
+  	}
+  	/**统计平台租客信息*/
+  	function doGetOwnerCountInfo(){
+  			//$("#checkAll").prop("checked",false);
+			//1.定义请求的url
+			const url = "owner/doGetOwnerCountInfo";  //常量不可修改
+			//3.发送异步请求(借助jquery中的ajax函数)
+			$.getJSON(url,function(result){
+				console.log(result);
+				$("#ownerCountId").empty();
+  	  			$("#ownerCountId").append(result.data.ownerCount);
+				$("#apCountId").empty();
+  	  			$("#apCountId").append(result.data.apCount);
+				$("#onRentApCountId").empty();
+  	  			$("#onRentApCountId").append(result.data.onRentApCount);
+				$("#riseOwnerCountId").empty();
+  	  			$("#riseOwnerCountId").append(result.data.riseOwnerNumber);
+			});
+  	}
+  	function doQueryObjects(){
+  		//1.初始化
+  		$("#pageId").data("pageCurrent",1);
+  		$("#pageId").data("pageSize",0);
+  		//基于当前用户名查询日志信息
+  		doGetObjects();	
+  	}
+  		/*异步查询租客信息  */   
+  		function doGetObjects(){ //注意文档就绪事件,
+  			//$("#checkAll").prop("checked",false);
+  			//1.定义请求的url
+  			const url = "owner/doFindPageObjects";  //常量不可修改
+  			//2.定义请求的参数
+  			//debugger
+  			var pageCurrent = $("#pageId").data("pageCurrent");  //data域中的值
+  			var pageSize = $("#pageId").data("pageSize");  //data域中的值
+  			if(!pageCurrent) pageCurrent=1;
+  			var params = {"pageCurrent":pageCurrent} //json格式对象 "pageCurrent=1"
+  			var name = $("#searchNameId").val();
+  			if(name)params.name=name;
+  			console.log(params);
+  			//3.发送异步请求(借助jquery中的ajax函数)
+  			$.getJSON(url,params,function(result){
+  				console.log(result);
+  				if(result.state==1){
+  					if(result.data.records.length==0){
+  						$("#tbodyId").empty();
+  						$("#tbodyId").append("<h4>无数据记录!</h4>");
+  					}else{
+  						doHandleResponseResult(result);
+  					}	
+  				}else{
+  					$("#personId").data("state",result.state);
+  					$("#pageId").append("<td>无数据记录</td>");
+  					//alert("无数据记录!");	
+  				}	
+  			});
+  		}
+  	 	function doHandleResponseResult(result){
+  	  		if(result.state==1){
+  	  			$("#pageId").data("pageSize",result.data.pageSize);
+				$("#pageId").data("pageCurrent",result.data.pageCurrent)
+  	  			//1.将租客信息记录添加到tbody中
+  	  			doSetTableBodyRows(result.data.records);  //错误records 不是json格式
+  	  			//2.将租客信息分页信息添加到pageId位置
+  	  			doSetPagination(result.data)
+  	  		}else{
+  	  		    let tBody = $("#tbodyId");
+  	  		    tBody.empty();
+	  	  		$(".rowCount").html("总记录数(0)");
+	  			$(".pageCount").html("总页数(0)");
+	  			$(".pageCurrent").html("当前页(1)");
+	  			$("#checkAll").prop("checked",false);
+	  			//let tr = $("<tr></tr>");
+	  			let td = "<span class="+"sale-num"+">"+"无数据记录!"+"</span>";
+	  			//tr.append(td);
+	  			tBody.append(td);
+  	  			//alert(result.message);
+  	  		}
+  	  	}
+  	 function doSetTableBodyRows(records){
+  	  		//1.获取tbody对象，并清空记录
+  	  		let tBody=$("#tbodyId");  //错误大括号  //let局部作用域   es6的语法
+  	  		tBody.empty();
+  	  		//2.迭代日志记录
+  	  		 for(let i=0;i<records.length;i++){
+  	  			//2.1创建tr对象
+  	  			let tr=$("<tr></tr>");
+  	  			//绑定手机号码
+  	  			tr.data("phone",records[i].phone);
+  	  			//2.2创建多个td对象(列)
+  	  			let tds=doCreateTds(records[i],i);
+  	  			//2.3将创建的td追加到tr对象
+  	  			tr.append(tds)
+  	  			//2.4将tr对象追加到tbody中
+  	  			tBody.append(tr); 
+  	  		}
+  	  	}
+	 function doCreateTds(data,i){
+		 var pageCurrent = $("#pageId").data("pageCurrent");  //data域中的值
+		 var pageSize = $("#pageId").data("pageSize");  //data域中的值
+	  	 var serialNum = (pageCurrent-1)*pageSize+i+1;
+	  	 let tds="<td>"+serialNum+"</td>"+
+	  		   	 "<td>"+data.name+"</td>"+
+	  		     "<td>"+data.gender+"</td>"+
+	  		     "<td>"+data.phone+"</td>"+
+	  		     "<td>"+data.idNumber+"</td>"+
+	  			"<td>"+data.registerTime+"</td>";
+	  			if(data.apNumber==null){
+	  				tds = tds+"<td>0</td>";
+	  			}else{
+	  				tds = tds+"<td>"+data.apNumber+"</td>";
+	  			}  
+	  		    tds = tds + "<td><a id='ownerApInfoId' class='btn mini blue' ><i class='icon-search'></i>&nbsp;详情</a>"    
+	  		          +"<a id='deleteId' class='btn mini black'><i class='icon-trash'></i>删除</a></td>";
+	 	  return tds;
+	 }
+</script>

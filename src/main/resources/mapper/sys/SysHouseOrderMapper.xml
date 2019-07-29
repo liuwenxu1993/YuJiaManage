@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yj.sys.dao.SysHouseOrderDao">
+	<select id="getRowCount" resultType="int">
+		select count(*)
+		from sys_aporder
+		where status='预约';
+	</select>
+	<select id="findPageObjects"
+		resultType="com.yj.sys.entity.SysHouseOrder">
+		select 
+		B.id as id,
+		B.created_time as createdTime,
+		A.name as apName,
+		A.addr as apAddr,
+		A.type as apType,
+		A.place as apPlace,
+		A.price as apPrice,
+		C.name as ownerName,
+		C.phone as ownerPhone,
+		P.name as renterName,
+		P.phone as renterPhone
+		from sys_aporder B
+		left outer join sys_ap A on B.ap_id = A.id
+		left outer join sys_renter P on B.renter_id = P.id
+		left outer join sys_owner C on A.phone = C.phone
+		where B.status = '预约'
+		order by B.created_time desc
+		limit #{startIndex},#{pageSize}
+	</select>
+	<update id="updateObject" parameterType="int">
+	update sys_aporder set
+	status='作废',handle_time=now() ,staff_id=#{staffId}
+	where id=#{id}
+	</update>
+	
+	<update id="addAccount">
+		update sys_account set aporder_accout=ifnull(aporder_account,0)+
+		(select price from sys_ap where id in(select ap_id from sys_aporder where id=#{id}))
+		where date=#{date}
+	</update>
+	
+	<update id="updatePutIn" parameterType="int">
+	update sys_aporder set
+	status='成交',handle_time=now() ,staff_id=#{staffId}
+	where id=#{id}
+	</update>
+	
+	<select id="findOrderByApId" resultType="com.yj.sys.entity.SysApOrder">
+		select 
+		B.name as renterName,
+		B.phone as renterPhone,
+		A.created_time as createdTime,
+		A.status as status,
+		A.handle_time as handlerTime,
+		C.name as staffName
+ 		from 
+		sys_aporder A join sys_renter B on A.renter_id=B.id
+		join sys_staff C on A.staff_id =C.id
+		where ap_id=#{apId}
+		order by A.created_time desc
+	</select>
+	
+	<select id="findDoneOrder" resultType="com.yj.sys.entity.SysAccount">
+		select A.id as id,
+		A.handle_time as handledTime,
+		B.name as apName,
+		B.addr as apAddr,
+		B.price as money,
+		C.name as staffName
+		from sys_aporder A
+		join sys_ap B on A.ap_id=B.id
+		join sys_staff C on C.id=A.staff_id
+		where A.status="成交"
+		order by A.handle_time desc
+		limit #{startIndex},#{pageSize}
+	</select>
+	
+	<select id="sumAccount" resultType="int">
+	  select sum(B.price) 
+	  from sys_aporder A 
+	  join sys_ap  B on  A.ap_id=B.id
+	  where A.status="成交" and Month(A.handle_time)=Month(now())
+	</select>
+
+</mapper>

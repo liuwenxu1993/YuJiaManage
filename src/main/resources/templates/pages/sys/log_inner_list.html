@@ -1,0 +1,312 @@
+<div class="container-fluid">
+
+	<!-- BEGIN PAGE HEADER-->
+
+	<div class="row-fluid">
+
+		<div class="span12">
+
+			<h3 class="page-title">
+
+				日志管理中心 <small>数据一览</small>
+
+			</h3>
+
+			<ul class="breadcrumb">
+
+				<li><i class="icon-briefcase"></i> <a href="#">日志管理中心</a> <i
+					class="icon-angle-right"></i></li>
+
+				<li><a href="#">内部日志管理</a></li>
+
+
+
+			</ul>
+
+			<!-- END PAGE TITLE & BREADCRUMB-->
+
+		</div>
+
+
+		<div>
+			<ul style="float: right; list-style: none; ">
+				<!-- <li style="float: left; padding-left: 10px;">
+					<button type="button" class="btn btn-default serorder-select-id" style="Float: right; padding-top: 4px; padding-bottom: 4px;">开始</button>
+				</li>
+				<li style="float: left;">
+					<input type="date" name="table_search" id="log-select-start-time" placeholder="请输入订单日期" style="Float: right"></input>
+				</li>
+				<li style="float: left; padding-left: 10px;">
+					<button type="button" class="btn btn-default serorder-select-id" style="Float: right; padding-top: 4px; padding-bottom: 4px;">结束</button>
+				</li> 
+				<li style="float: left;">
+					<input type="date" name="table_search" id="log-select-end-time" placeholder="请输入订单日期" style="Float: right"></input>
+				</li>-->
+				<li style="float: left; padding-left: 10px;">
+					<input type="text" name="table_search" id="innerSearchNameId" placeholder="请输入用户名" style="Float: right"></input>
+				</li>
+				<div class="input-group-btn" style="float: right; list-style: none; border: solid 2px ＃cccccc; display: block; align-content: space-between;">
+						<button type="button" class="btn btn-default inner-btn-delete" style="Float: right; padding-top: 4px; padding-bottom: 4px;">删除</button>
+						<button type="button" class="btn btn-default inner-btn-search" style="Float: right; padding-top: 4px; padding-bottom: 4px;">搜索</button>
+				</div>
+			</ul>
+
+
+		</div>
+		<!-- /.box-header -->
+		<div class="box-body table-responsive no-padding">
+			<table class="table table-hover" style="width: 100%">
+				<thead>
+					<tr>
+						<th><input type="checkbox" id="checkAll"> 全选</th>
+						<th>用户名</th>
+						<th>相关操作</th>
+						<th>请求方法</th>
+						<th>请求参数</th>
+						<th>IP</th>
+						<th>执行时间</th>
+					</tr>
+				</thead>
+				<tbody id="tbodyId">
+					<tr>
+						<td colspan="7">数据正在加载中...</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div id="pageId" class="box-footer clearfix pagination pagination-right"></div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(function() {
+		//异步加载分页页面
+		var doPageUIUrl = "doPageUI"
+		$("#pageId").load(doPageUIUrl, doGetObjects);
+		//$("#pageId").load(doPageUIUrl)和doGetObjects()是2个异步执行(加载和请求)
+		//doGetObjects()需要等异步加载分页页面完成后才能执行(回调doGetObjects()),要不然会出错.
+
+		//搜索按钮注册
+		$(".input-group-btn").on("click", ".inner-btn-search", doQueryObjects);
+		//给删除按钮注册
+		$(".input-group-btn").on("click", ".inner-btn-delete", doDeleteObjects);
+
+		$("#checkAll").change(doChangeTBodyCheckboxState);
+
+		//tbody中checkbox对象时间注册
+		$("#tbodyId").on("change", doChangeTHeadCheckboxState)
+	})
+
+	function doChangeTHeadCheckboxState() {
+		//1.获取所有tbody中checkbox对象状态相与的状态
+		var flag = true;
+		$("#tbodyId input[type='checkbox']").each(function() {
+			//	 true&&每个checkbox的选中状态 
+			flag = flag && $(this).prop("checked")
+		});
+		//2.修改thead中checkbox的状态
+		$("#checkAll").prop("checked", flag);
+	}
+	//this为checkAll
+	function doChangeTBodyCheckboxState() {
+		//1.获取全选对象的状态值
+		var flag = $(this).prop("checked");
+		//2.修改tbody中每个checkbox对象的状态值
+		$("#tbodyId input[type='checkbox']").each(function() {
+			//设置checkbox为checkAll一样的状态
+			$(this).prop("checked", flag);
+		})
+	}
+
+	function doDeleteObjects() {
+		//1.获取选中记录的id值并效验
+		var ids = doGetCheckedIds();
+		if (!ids) {
+			alert("请选中要删除的记录信息");
+			return;
+		}
+		//2.提示是否删除
+
+		if (confirm("确认删除吗")) {
+			//3.定义删除url
+			var url = "log/doDeleteObjects";
+			//4.定义删除时要传递的参数
+			var params = {
+				"ids" : ids.toString()
+			};
+			console.log(params);
+			//5.执行异步删除业务
+			$.post(url, params, function(result) {
+				if (result.state == 1) {
+					alert(result.message);
+					//
+					doRefresh();
+
+				} else {
+					alert(result.message);
+				}
+			});
+		}
+	}
+
+	function doRefresh() {
+		//1.获取当前页码值，总页数
+		var pageCurrent = $("#pageId").data("pageCurrent");
+		var pageCount = $("#pageId").data("pageCount");
+		//2.获取checkAll的状态值
+		var flag = $("#checkAll").prop("checked");
+		if (pageCurrent = 1 && pageCurrent == pageCount && flag) {
+			$("#checkAll").prop("checked", false);
+			$("#tbodyId").empty();
+			//所有数据删除完后 初始化对应组件
+			doInitPagination();
+			return;
+		}
+		if (pageCurrent != 1 && flag && pageCurrent == pageCount) {
+			pageCurrent--;
+			$("#pageId").data("pageCurrent", pageCurrent);
+		}
+		doGetObjects();
+	}
+
+	//所有数据删除完后 初始化对应组件
+	function doInitPagination() {
+		$(".rowCount").html("总记录数(0)")
+		//2.初始化总页数
+		$(".pageCount").html("总页数(0)")
+		//3.初始化当前页码
+		$(".pageCurrent").html("当前页(1)")
+	}
+
+	//修改当前页码值
+	function doChangePageCurrent() {
+		//1.获取当前页码值，总页数
+		var pageCurrent = $("#pageId").data("pageCurrent");
+		var pageCount = $("#pageId").data("pageCount");
+		//2.获取checkAll的状态值
+		var flag = $("#checkAll").prop("checked");
+		//3.修改当前页码值
+		if (pageCurrent != 1 && flag && pageCurrent == pageCount) {
+			pageCurrent--;
+			$("#pageId").data("pageCurrent", pageCurrent);
+		}
+	}
+
+	//获取选中的id值
+	function doGetCheckedIds() {
+		//1.定义一个数组，用于存储id
+		var array = [];
+		//2.遍历所有checkbox获得选中的id存入数组中                   用于迭代输出
+		$("#tbodyId input[type='checkbox']").each(function() {
+			//如果复选框为选中状态
+			if ($(this).prop("checked")) {
+				//则将对应的id存入数组
+				array.push($(this).val())
+			}
+		});
+		//3返回存储了ids的array数组.
+		return array;
+	}
+
+	//点击查询按钮
+	function doQueryObjects() {
+		//1.初始化当前页码值为1
+		$("#pageId").data("pageCurrent", 1);
+		//2.基于用户名查询日志信息
+		doGetObjects();
+	}
+
+	//异步查询用户行为日志
+	function doGetObjects() {
+		//初始化checkbox状态
+		$("#checkAll").prop("checked", false);
+		//1.定义气球的url
+		var url = "log/doFindPageObjects";
+		//2.定义请求的参数
+		//? 请问data函数的含义是什么？(从指定元素上获取绑定的数据)
+		//此数据会在何时进行绑定？(setPagination,doQueryObjects)
+		var pageCurrent = $("#pageId").data("pageCurrent");
+		//为什么要执行如下语句的判定，然后初始化pageCurrent的值为1
+		//pageCurrent参数在没有赋值的情况下，默认初始值应该为1.
+		if (!pageCurrent) {
+			pageCurrent = 1;
+		}
+		var params = {
+			"pageCurrent" : pageCurrent
+		};//pageCurrent=2
+		var username = $("#innerSearchNameId").val();
+		var timestart = document.getElementById('log-select-start-time');
+		var timeend = document.getElementById('log-select-end-time');
+		console.log(timestart);
+		console.log(timeend);
+		//点击查询按钮时,usernmae可能会输入一个值
+		if (username) {
+			params.username = username;
+		}
+
+		//3.发送异步请求(借助jquery中的ajax函数)
+		//通过getJSON方法加入对应的地址已经参数访问对应接口,
+		//然后回调function(result)获取返回数据,即JsonResult(json格式的对象)
+		$.getJSON(url, params, function(result) {
+			doHandleResponseResult(result);
+		});
+	}
+
+	function doHandleResponseResult(result) {
+		if (result.state == 1) {
+			//判断当前记录只有一行的时候
+			if (result.data.rowCount == 1) {
+				//将用户名直接设置为null
+				$("#innerSearchNameId").val(null)
+			}
+			//1.将日志借宿添加到tbody中
+			doSetTableBodyRows(result.data.records);
+			//2.将日志分页信息添加到pageId位置
+			doSetPagination(result.data);
+			//3.
+		} else {
+			alert(result.message);
+
+		}
+	}
+
+	function doSetTableBodyRows(records) {
+		//1.获取tbody对象,并清空数据
+		var tBody = $("#tbodyId");
+		tBody.empty();
+		//2.迭代日志记录records,将其最佳到tbody
+		for (var i = 0; i < records.length; i++) {
+			//2.1创建tr对象
+			var tr = $("<tr></tr>");
+			//2.2创建多个td对象
+			var tds = doCreateTds(records[i]);
+			//2.3将td追加到到tr对象中
+			tr.append(tds);
+			//2.4将tr追加到tbody中
+			tBody.append(tr);
+		}
+	}
+
+	//创建多个td对象
+	function doCreateTds(data) {
+		var tds = "<td><input type='checkbox' class='cBox' name='cItem' value='"+data.id+"'></td>"
+				+ "<td>"
+				+ data.username
+				+ "</td>"
+				+ "<td>"
+				+ data.operation
+				+ "</td>"
+				+ "<td>"
+				+ data.method
+				+ "</td>"
+				+ "<td>"
+				+ data.params
+				+ "</td>"
+				+ "<td>"
+				+ data.ip
+				+ "</td>"
+				+ "<td>"
+				+ data.time + "</td>";
+		return tds;
+	}
+</script>

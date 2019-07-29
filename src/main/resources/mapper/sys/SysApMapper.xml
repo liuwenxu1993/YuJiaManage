@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yj.sys.dao.SysApDao">
+	
+	<!-- 一般用于定义sql语句的共性 -->
+	<sql id="queryAll">
+		<if test="param!=null and param!=''">
+			 like concat("%",#{param},"%")
+		</if>
+	</sql>
+	
+	<!-- 统计记录总数 -->
+	<select id="getRowCount" resultType="Integer">
+		select count(*) from sys_ap
+		where name <include refid="queryAll"></include>
+		or addr <include refid="queryAll"></include>
+		or type <include refid="queryAll"></include>
+		or place <include refid="queryAll"></include>
+		or price <include refid="queryAll"></include>
+		or phone <include refid="queryAll"></include>
+		or status <include refid="queryAll"></include>
+		or description <include refid="queryAll"></include>
+	</select>
+	
+	<!-- 查询当前页数 -->
+	<select id="findPageObjects" resultType="com.yj.sys.common.vo.SysApVo">
+		select ap.*,pic.path picture from (select * from sys_ap 
+		where name <include refid="queryAll"></include>
+		or addr <include refid="queryAll"></include>
+		or type <include refid="queryAll"></include>
+		or place <include refid="queryAll"></include>
+		or price <include refid="queryAll"></include>
+		or phone <include refid="queryAll"></include>
+		or status <include refid="queryAll"></include>
+		or description <include refid="queryAll"></include>
+		order by created_time desc
+		limit #{startIndex},#{pageSize}) ap join sys_ap_pics pic on ap.id=pic.ap_id;
+	</select>
+	
+	<resultMap type="com.yj.sys.common.vo.SysApVo"  id="sysAporders">
+		<collection 
+		property="records" 
+		column="ids" 
+		select="com.yj.sys.dao.SysHouseOrderDao.findOrderByApId">
+		</collection>
+	</resultMap>
+	
+	<select id="findPageById" resultMap="sysAporders">
+		select ap.*,pic.path picture,ap.id as ids from (select * from sys_ap where id=#{id})ap join sys_ap_pics pic on ap.id=pic.ap_id;
+	</select>
+	
+</mapper>

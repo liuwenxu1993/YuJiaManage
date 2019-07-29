@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.list li{  
+		padding: 8px;
+		font-size: 1.5em;
+		border-bottom: solid 1px grey;
+}
+.list li span{
+		color:grey;
+		margin-right:20px;
+}
+.page{
+		text-align:center;
+}
+
+.page .list{
+		text-align:left
+}
+
+table{
+	border:1px solid grey;
+	border-collapse:collapse;
+}
+
+table tr{
+	border:1px solid grey;
+}
+
+table td,th{
+	text-align:center;
+	border-right:1px solid grey;
+	font-size: 1.4em;
+	padding:5px;
+}
+
+p{
+	color:grey;
+	font-size: 1.5em;
+}
+
+.table{
+	margin-left:45px;
+}
+
+</style>
+</head>
+<body class="page">
+	<script type="text/javascript" src="../media/js/jquery-1.10.1.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$.ajax({
+				url:"doGetAp",
+				success:function(result){
+					console.log(result);
+					doHandleResult(result.data);
+				}
+			})
+		})
+		
+		function doHandleResult(data){
+			var page ="<img src='../pics/"+data.picture+"'/>"+
+				"<div class='list'>"+
+			"<ul style='list-style:none;list-style-position: initial;'>"+
+				"<li><span>公寓名称:</span>"+data.name+"</li>"+
+				"<li><span>所在区域:</span>"+data.district+"</li>"+
+				"<li><span>详细地址:</span>"+data.addr+"</li>"+
+				"<li><span>业主电话:</span>"+data.phone+"</li>"+
+				"<li><span>公寓类型:</span>"+data.type+"</li>"+
+				"<li><span>公寓面积:</span>"+data.place+"<small>㎡</small></li>"+
+				"<li><span>公寓租金:</span><small>￥</small>"+data.price+"</li>"+
+				"<li><span>上传时间:</span>"+new Date(data.createdTime).toLocaleString()+"</li>"+
+				"<li><span>上传员工:</span>"+data.createdUser+"</li>"+
+				"<li><span>修改时间:</span>"+new Date(data.modifiedTime).toLocaleString()+"</li>"+
+				"<li><span>修改员工:</span>"+data.modifiedUser+"</li>"+
+				"<li><span>租赁情况:</span>"+data.status+"</li>"+
+				"<li><span>公寓描述:</span>"+data.description+"</li></ul></div>";
+				
+				var records=doCreatedRecords(data.records);
+				
+				$(".page").append(page).append(records);
+		}
+		
+		function doCreatedRecords(records){
+			if(records.length==0)  {
+				return "<ul class='list' style='list-style:none;list-style-position: initial;'><li><span>预约记录:</span>暂无</li></ul>";
+			}
+			var table ="<p>预约记录</p><div class='table'><table><thead><tr>"+
+			"<th>预约时间</th>"+
+			"<th>客户姓名</th>"+
+			"<th>客户电话</th>"+
+			"<th>处理时间</th>"+
+			"<th>处理员工</th>"+
+			"<th>预约状态</th></tr>"+
+			"<thead><tbody>";
+			var res='';
+			for(var i in records){
+				res=res+"<tr>"+
+				"<td>"+new Date(records[i].createdTime).toLocaleString()+"</td>"+
+				"<td>"+records[i].renterName+"</td>"+
+				"<td>"+records[i].renterPhone+"</td>"+
+				"<td>"+new Date(records[i].handlerTime).toLocaleString()+"</td>"+
+				"<td>"+records[i].staffName+"</td>"+
+				"<td>"+records[i].status+"</td></tr>"
+			}
+			return table+res+"</tbody></table></div>";
+		}
+		
+	</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yj.sys.dao.SysRenterDao">
+	<!--sql元素一般用于定义共性sql语句 -->
+	<!--租客信息所有字段  -->
+	<sql id="RenterInfo">
+		id,name,gender,phone,id_number,status,register_time 
+	</sql>
+	<sql id="querywhereNameOrTel">
+		<where> <!--内部if成立,则添加一个where,否则where不添加  -->
+			<if test="name!=null and name!=''">	 <!--动态sql -->
+				name like concat("%",#{name},"%") or phone like concat("%",#{name},"%")
+			</if>
+		</where> 
+	</sql>
+	 <!--按条件查询租客总数  -->
+	 <select id="getRowCounts" resultType="int">
+	 	select count(*) from sys_renter <include refid="querywhereNameOrTel"/>
+	 </select>
+</mapper>
