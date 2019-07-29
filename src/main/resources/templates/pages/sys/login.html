@@ -60,7 +60,7 @@
 
 	<div class="logo">
 
-		<img src="media/image/logo-big.png" alt="" /> 
+		<h3><font style="color:white">寓家</font> <font style="color:red"> 专注品质生活</font></h3>
 
 	</div>
 
@@ -72,7 +72,7 @@
 
 		<!-- BEGIN LOGIN FORM -->
 
-		<form class="form-vertical login-form" action="index.html">
+		<form class="form-vertical login-form" id="form" action="index.html">
 
 			<h3 class="form-title">登陆您的账号</h3>
 
@@ -96,7 +96,7 @@
 
 						<i class="icon-user"></i>
 
-						<input class="m-wrap placeholder-no-fix" type="text" placeholder="用户名" name="username"/>
+						<input class="m-wrap placeholder-no-fix" type="text" placeholder="用户名" name="name"/>
 
 					</div>
 
@@ -130,7 +130,7 @@
 
 				</label>
 
-				<button type="submit" class="btn blue pull-right">
+				<button type="button" onclick="doLogin()" class="btn blue pull-right">
 
 				登陆<i class="m-icon-swapright m-icon-white"></i>
 
@@ -145,7 +145,7 @@
 
 	<div class="copyright">
 
-		2018 &copy; 寓家 | 专注生活
+		2019 &copy; 寓家 | 专注品质生活
 
 	</div>
 
@@ -208,6 +208,27 @@
 		  Login.init();
 
 		});
+		
+		function doLogin(){
+			console.log("登录");
+			var form=new FormData(document.getElementById("form"))
+   			$.ajax({
+   			        url:"staff/doLogin",
+   			        type:"post",
+   			        data:form,
+   			        async:false,
+   			        processData:false,
+   			        contentType:false,
+   			        success:function(result){
+   			        	alert(result.message);
+   			        	if(result.state==1) back();
+   			        }
+   		    });  
+		}
+		
+		function back(){//设置返回上一页
+			window.location.href = "/doIndexUI";
+   		}
 
 	</script>
 

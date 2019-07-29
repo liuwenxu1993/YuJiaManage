@@ -64,13 +64,13 @@
 
 					<div class="details">
 
-						<div class="number">12</div>
+						<div class="number ordernumber">12</div>
 
 						<div class="desc">待处理预约订单</div>
 
 					</div>
 
-					<a class="more" href="#"> 进入查看... <i
+					<a class="more" id="load-order-id"> 进入查看... <i
 						class="m-icon-swapright m-icon-white"></i>
 
 					</a>
@@ -86,19 +86,19 @@
 
 					<div class="visual">
 
-						<i class="icon-globe"></i>
+						<i class="icon-home"></i>
 
 					</div>
 
 					<div class="details">
 
-						<div class="number">80</div>
+						<div class="number apnumber">80</div>
 
-						<div class="desc">今日保洁服务订单</div>
+						<div class="desc">平台总房源</div>
 
 					</div>
 
-					<a class="more" href="#"> 进入查看... <i
+					<a class="more" id="load-aps-id"> 进入查看... <i
 						class="m-icon-swapright m-icon-white"></i>
 
 					</a>
@@ -114,19 +114,19 @@
 
 					<div class="visual">
 
-						<i class="icon-comments"></i>
+						<i class="icon-group"></i>
 
 					</div>
 
 					<div class="details">
 
-						<div class="number">1349</div>
+						<div class="number renternumber">1349</div>
 
 						<div class="desc">平台总用户数</div>
 
 					</div>
 
-					<a class="more" href="#"> 进入用户管理... <i
+					<a class="more" id="load-renters-id"> 进入用户管理... <i
 						class="m-icon-swapright m-icon-white"></i>
 
 					</a>
@@ -148,7 +148,7 @@
 
 					<div class="details">
 
-						<div class="number">
+						<div class="number account" >
 							<small>￥</small>120,000
 						</div>
 
@@ -156,7 +156,7 @@
 
 					</div>
 
-					<a class="more" href="#"> 查看 <i
+					<a class="more" id="viewAcount"> 查看 <i
 						class="m-icon-swapright m-icon-white"></i>
 
 					</a>
@@ -172,3 +172,44 @@
 	</div>
 
 </div>
+
+<script>
+	$(function() {
+		var url = "houseOrder/doCount";
+		$.getJSON(url, function(result) {
+			$(".ordernumber").html(result.data)
+		});
+		var url = "renter/doCount"
+			$.getJSON(url, function(result) {
+				$(".renternumber").html(result.data)
+			});
+		var url = "ap/doCount"
+			$.getJSON(url, function(result) {
+				$(".apnumber").html(result.data)
+			});
+		loadpage("load-order-id", "houseOrder/doHouseOrderListUI");
+		loadpage("load-renters-id", "renter/doRenterListUI");
+		loadpage("load-aps-id", "ap/doApListUI");
+		loadpage("viewAcount", "account/doAccountListUI");
+		
+		doGetAccountCountInfo();
+	})
+	
+	function doGetAccountCountInfo() {
+		//$("#checkAll").prop("checked",false);
+		//1.定义请求的url
+		const url = "account/doAccountAmount"; //常量不可修改
+		//3.发送异步请求(借助jquery中的ajax函数)
+		$.getJSON(url, function(result) {
+			console.log(result);
+			$(".account").empty();
+			$(".account").append("<small>￥</small>").append(result.data);
+		});
+	}
+
+	function loadpage(id, url) {
+		$("#" + id).click(function() {
+			$(".page-content").load(url)
+		})
+	}
+</script>

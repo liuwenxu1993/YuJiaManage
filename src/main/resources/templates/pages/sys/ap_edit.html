@@ -1,267 +1,374 @@
-		<!-- BEGIN PAGE CONTAINER-->
 
-		<div class="container-fluid">
+<!-- BEGIN PAGE CONTAINER-->
 
-			<!-- BEGIN PAGE HEADER-->
+<div class="container-fluid">
 
-			<div class="row-fluid">
+	<!-- BEGIN PAGE HEADER-->
 
-				<div class="span12">
+	<div class="row-fluid">
 
-					<h3 class="page-title">
+		<div class="span12">
 
-						新增公寓 <small></small>
+			<h3 class="page-title">
 
-					</h3>
+				新增公寓 <small></small>
 
-					<ul class="breadcrumb">
+			</h3>
 
-						<li>
+			<ul class="breadcrumb">
 
-							<i class="icon-th"></i>
+				<li><i class="icon-th"></i> <a>公寓管理</a> <i
+					class="icon-angle-right"></i></li>
 
-							<a>公寓管理</a>
+				<li><a>新增公寓</a></li>
 
-							<i class="icon-angle-right"></i>
+			</ul>
 
-						</li>
+			<!-- END PAGE TITLE & BREADCRUMB-->
 
-						<li><a>新增公寓</a></li>
+		</div>
 
-					</ul>
+	</div>
 
-					<!-- END PAGE TITLE & BREADCRUMB-->
+	<!-- END PAGE HEADER-->
+
+	<!-- 主内容窗口 -->
+	<div class="portlet-body form">
+
+		<!-- BEGIN FORM-->
+
+		<form name="form" id="form_sample_2" class="form-horizontal"
+			method="post" enctype="multipart/form-data">
+
+			<div class="alert alert-error hide">
+
+				<button class="close" data-dismiss="alert"></button>
+
+				信息不完整或出现错误，请检查
+
+			</div>
+
+			<div class="alert alert-success hide">
+
+				<button class="close" data-dismiss="alert"></button>
+
+				恭喜您完成新增公寓！
+
+			</div>
+
+			<div class="control-group">
+
+				<label class="control-label">公寓名<span class="required">*</span></label>
+
+				<div class="controls">
+
+					<input type="text" name="name" id="name" data-required="1"
+						class="span6 m-wrap" />
 
 				</div>
 
 			</div>
 
-			<!-- END PAGE HEADER-->
-			
-			<!-- 主内容窗口 -->
-			<div class="portlet-body form">
-			
-				<!-- BEGIN FORM-->
-			
-				<form name="form"  id="form_sample_2" class="form-horizontal"  method="post" enctype="multipart/form-data">
-			
-					<div class="alert alert-error hide">
-			
-						<button class="close" data-dismiss="alert"></button>
-			
-						信息不完整或出现错误，请检查
-			
-					</div>
-			
-					<div class="alert alert-success hide">
-			
-						<button class="close" data-dismiss="alert"></button>
-			
-						恭喜您完成新增公寓！
-			
-					</div>
-			
-					<div class="control-group">
-			
-						<label class="control-label">公寓名<span class="required">*</span></label>
-			
-						<div class="controls">
-			
-							<input type="text" name="name" data-required="1" class="span6 m-wrap"/>
-			
-						</div>
-			
-					</div>
-					
-					<div class="control-group">
-			
-						<label class="control-label">所在区域<span class="required">*</span></label>
-			
-						<div class="controls">
-			
-							<select class="span6 m-wrap" name="district">
-								<option value="">请选择...</option>
-			
-								<option value="南山">南山区</option>
-			
-								<option value="福田">福田区</option>
-			
-								<option value="宝安">宝安区</option>
-			
-								<option value="龙华">龙华区</option>
-								
-								<option value="罗湖">罗湖区</option>
-								
-								<option value="龙岗">龙岗区</option>
-								
-								<option value="盐田">盐田区</option>
-								
-								<option value="光明新区">光明新区</option>
-								
-								<option value="大鹏新区">大鹏新区</option>
-			
-							</select>
-			
-						</div>
-			
-					</div>
-			
-					<div class="control-group">
-			
-						<label class="control-label">详细地址<span class="required">*</span></label>
-			
-						<div class="controls">
-			
-							<input name="addr" type="text" class="span6 m-wrap"/>
-			
-						</div>
-			
-					</div>
-					
-					<div class="control-group">
+			<div class="control-group">
+
+				<label class="control-label">所在区域<span class="required">*</span></label>
+
+				<div class="controls">
+
+					<select class="span6 m-wrap" name="district" id="district">
+						<option value="">请选择...</option>
+
+						<option value="南山">南山区</option>
+
+						<option value="福田">福田区</option>
+
+						<option value="宝安">宝安区</option>
+
+						<option value="龙华">龙华区</option>
+
+						<option value="罗湖">罗湖区</option>
+
+						<option value="龙岗">龙岗区</option>
+
+						<option value="盐田">盐田区</option>
+
+						<option value="光明新区">光明新区</option>
+
+						<option value="大鹏新区">大鹏新区</option>
+
+					</select>
+
+				</div>
+
+			</div>
+
+			<div class="control-group">
+
+				<label class="control-label">详细地址<span class="required">*</span></label>
+
+				<div class="controls">
+
+					<input name="addr" id="addr" type="text" class="span6 m-wrap" />
+
+				</div>
+
+			</div>
+
+			<!-- <div class="control-group">
 			
 						<label class="control-label">业主电话<span class="required">*</span></label>
 			
 						<div class="controls">
 			
-							<input name="phone" type="text" class="span6 m-wrap"/>
+							<input name="phone" id="phone" type="text" class="span6 m-wrap"/>
 			
 						</div>
 			
-					</div>
-			
-					<div class="control-group">
-			
-						<label class="control-label">公寓类型<span class="required">*</span></label>
-			
-						<div class="controls">
-			
-							<select class="span6 m-wrap" name="type">
-			
-								<option value="">请选择</option>
-			
-								<option value="豪华型">豪华型</option>
-			
-								<option value="舒适型">舒适型</option>
-			
-								<option value="经济型">经济型</option>
-			
-							</select>
-			
-						</div>
-			
-					</div>
-					
-					<div class="control-group">
-			
-						<label class="control-label">公寓面积(㎡)<span class="required">*</span></label>
-			
-						<div class="controls">
-			
-							<input name="place" type="text" class="span6 m-wrap"/>
-			
-						</div>
-			
-					</div>
-					
-					<div class="control-group">
-			
-						<label class="control-label">公寓租金(￥)<span class="required">*</span></label>
-			
-						<div class="controls">
-			
-							<input name="price" type="text" class="span6 m-wrap"/>
-			
-						</div>
-			
-					</div>
-					
-					<!-- 上传照片 -->
-					<div class="control-group">
+					</div> -->
 
-							<label class="control-label">公寓图片<span class="required">*</span></label>
+			<div class="control-group">
 
-							<div class="controls">
+				<label class="control-label">业主电话<span class="required">*</span></label>
 
-									<div class="fileupload fileupload-new" data-provides="fileupload">
+				<div class="controls ">
 
-										<div class="input-append">
+					<select id="form_2_select2" class="m-wrap" name="phone"  style="width:460px">
 
-											<div class="uneditable-input">
+						<option  value=""></option>
 
-												<i class="icon-file fileupload-exists"></i> 
+					</select>
 
-												<span class="fileupload-preview"></span>
+				</div>
 
-											</div>
-
-											<span class="btn btn-file">
-
-											<span class="fileupload-new">选择图片</span>
-
-											<span class="fileupload-exists">修改</span>
-
-											<input type="file"  name="picture"  class="default" />
-
-											</span>
-
-											<a  class="btn fileupload-exists" data-dismiss="fileupload">删除</a>
-
-										</div>
-
-								</div>
-
-							</div>
-							
-							<div class="control-group">
-
-									<label class="control-label">描述<span class="required">*</span></label>
-
-									<div class="controls">
-
-											<textarea name="description" class="large m-wrap" rows="3"></textarea>
-
-									</div>
-
-							</div>
-
-					</div>
-			
-					<div class="form-actions">
-			
-						<button type="button" class="btn green" onclick="submitAp()">提交</button>
-			
-						<button onclick="addAp()" type="button" class="btn">取消</button>
-			
-					</div>
-			
-				</form>
-			
-				<!-- END FORM-->
-			
 			</div>
+
+			<div class="control-group">
+
+				<label class="control-label">公寓类型<span class="required">*</span></label>
+
+				<div class="controls">
+
+					<select class="span6 m-wrap" name="type" id="type">
+
+						<option  value="">请选择...</option>
+
+						<option  value="豪华型">豪华型</option>
+
+						<option value="舒适型">舒适型</option>
+
+						<option value="经济型">经济型</option>
+
+					</select>
+
+				</div>
+
+			</div>
+
+			<div class="control-group">
+
+				<label class="control-label">公寓面积(㎡)<span class="required">*</span></label>
+
+				<div class="controls">
+
+					<input name="place" id="place" type="text" class="span6 m-wrap" />
+
+				</div>
+
+			</div>
+
+			<div class="control-group">
+
+				<label class="control-label">公寓租金(￥)<span class="required">*</span></label>
+
+				<div class="controls">
+
+					<input name="price" id="price" type="text" class="span6 m-wrap" />
+
+				</div>
+
+			</div>
+
+			<!-- 上传照片 -->
+			<div class="control-group">
+
+				<label class="control-label">公寓图片<span class="required">*</span></label>
+
+				<div class="controls">
+
+					<div class="fileupload fileupload-new" data-provides="fileupload">
+
+						<div class="input-append">
+
+							<div class="uneditable-input">
+
+								<i class="icon-file fileupload-exists"></i> <span
+									class="fileupload-preview"></span>
+
+							</div>
+
+							<span class="btn btn-file"> <span class="fileupload-new">选择图片</span>
+
+								<span class="fileupload-exists">修改</span> <input type="file"
+								name="picture" id="picture" class="default" />
+
+							</span> <a class="btn fileupload-exists" data-dismiss="fileupload">删除</a>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<div class="control-group">
+
+					<label class="control-label">描述<span class="required">*</span></label>
+
+					<div class="controls">
+
+						<textarea name="description" id="description" class="large m-wrap"
+							rows="3"></textarea>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="form-actions">
+
+				<button type="button" class="btn green" onclick="submitAp()">提交</button>
+
+				<button onclick="addAp()" type="button" class="btn">取消</button>
+
+			</div>
+
+		</form>
+
+		<!-- END FORM-->
+
+	</div>
 </div>
 <script>
 
 	FormValidation.init();
 	FormComponents.init();
-	function saveAp(){
-		console.log("saveAp");
-		return true;
+	
+	$(function(){
+		initPage();
+		 $(".select2-input").keyup(findPhone); 
+		  $(".select2-results").mouseover(function(){
+			  $(".select2-input").val("");
+			 $(".select2-input").change();
+			 console.log("over");
+		 }); 
+		
+	})
+	
+	/* 初始化页面 */
+	function initPage(){
+		var data = $(".page-content").data("rowData");
+		console.log(data);
+		if(data){
+			$(".form-actions").html("<button type='button' class='btn green' onclick='updateAp("+data.id+")'>保存</button>"+
+					"<button onclick='back()' type='button' class='btn'>取消</button>");
+			$("#name").val(data.name);
+			$("#district").val(data.district);
+			$("#addr").val(data.addr);
+			$("#phone").val(data.phone);
+			$("#type").val(data.type);
+			$("#place").val(data.place);
+			$("#price").val(data.price);
+			$("#description").val(data.description);
+		}
 	}
+	
+	function findPhone(){
+		let phone = $(".select2-input").val();
+		if(phone.length>2){
+			var url="owner/findOwnerPhone";
+			var params = {"phone":phone}
+			console.log(phone)
+	 		console.log(params) 
+			$.getJSON(url,params,function(result){
+				console.log(result)
+				if(result.state==1)doHandleData(result.data);
+			});
+		}
+	}
+	//<option  value="Option 1">Option 1</option>
+	function doHandleData(data){
+		$(".select2-results").empty();
+		$("#form_2_select2").empty();
+		for(let i=0;i<data.length;i++){
+			console.log(i);
+			var options=doCreateOption(data[i]);
+			$("#form_2_select2").append(options);
+			var lis = doCreateLi(data[i]);
+			$(".select2-results").append(lis)
+		}
+	}
+	
+	function doCreateOption(option){
+		var option= "<option  value='"+option.phone+"'>"+option.phone+"    "+option.name+"</option>";
+		console.log(option);
+		return option;
+	}
+	
+	function doCreateLi(data){
+//		var li ="<li class='select2-results-dept-0 select2-result select2-result-selectable'><div class='select2-result-label'><span class='select2-match'></span>"+ data.phone+"    "+data.name+"</div></li>";
+		var li ="<option  value='"+data.phone+"'>"+data.phone+"    "+data.name+"</option>";
+		return li;
+	}
+	
+	/* 确认修改 */
+	function updateAp(id,status){
+		var data = $(".page-content").data("rowData");
+		var form=new FormData(document.getElementById("form_sample_2"));
+		form.append("id",id);
+		form.append("status",data.status);
+		console.log(form);
+		$.ajax({
+	        url:"ap/doSaveUpdateObject",
+	        type:"post",
+	        data:form,
+	        processData:false,
+	        contentType:false,
+	        success:function(result){
+	        	alert(result.message);
+	        	if(result.state==1) back();
+	        }
+   		 });  
+		//清空rowData的数据
+		$(".page-content").data("rowData",0);
+	}
+	
+	/* 取消修改 */
+	function back(){
+		//清空rowData的数据
+		$(".page-content").data("rowData",0);
+		$(".page-content").load("ap/doApListUI");
+	}
+	
 	function submitAp(){
-		form.action="ap/doSaveObject";
-		console.log("doSaveObject");
-		form.submit();
+		var form=new FormData(document.getElementById("form_sample_2"))
+		$.ajax({
+		        url:"ap/doSaveObject",
+		        type:"post",
+		        data:form,
+		        processData:false,
+		        contentType:false,
+		        success:function(result){
+		        	alert(result.message);
+		        	if(result.state==1) addAp();
+		        }
+	    });  
 	}
 	
 	function addAp(){
 		$(".page-content").load("ap/doShowApUI");
 	}
 	
-	function pictureUpload(){
-		console.log("pictureUpload")
-	}
+	
 	
 	
 </script>

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GlobalExceptionHandler {
 	
+	
 	/** ExceptionHandler表示给方法为异常处理方法 */
 	@ExceptionHandler(RuntimeException.class)
 	@ResponseBody

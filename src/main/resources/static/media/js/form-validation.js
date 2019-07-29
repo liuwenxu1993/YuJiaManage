@@ -82,7 +82,7 @@ var FormValidation = function () {
 
             //Sample 2
             $('#form_2_select2').select2({
-                placeholder: "Select an Option",
+                placeholder: "请选择...",
                 allowClear: true
             });
 
